@@ -1,6 +1,5 @@
 <a id="payment-button-khalti" href="#">Pay with Khalti</a>
 <script src="https://unpkg.com/khalti-checkout-web@latest/dist/khalti-checkout.iffe.js"></script>
-<% total_price = current_order.total%>
 <script>
   window.addEventListener('DOMContentLoaded', function () {
     SpreeGatewaysNepal.paymentMethodID = "<%= payment_method.id %>"
@@ -11,16 +10,22 @@
     publicKey: "<%= Spree::Gateway::Khalti.first.preferences[:test_public_key] %>",
     productIdentity:"<%= current_order.name %>",
     productName: "<%= current_order.products.first.name %>",
-    productUrl: "<%= 'localhost:3000/products/' + current_order.products.first.slug%>",
+    productUrl: "<%= 'https://bazarnp.com/products/' + current_order.products.first.slug%>",
     eventHandler: {
       onSuccess(payload) {
+        debugger
         var authenticity_token = $('input[name="authenticity_token"]')[0].value;
         // Call the backend API for verifying the token
         $.ajax({
           url: '/khalti',
           type: 'POST',
-          data: payload + `authenticity_token=${token}`
+          data: {
+            "payload": payload,
+            "payment_method_id": "<%= payment_method.id%>",
+            "authenticity_token": authenticity_token
+          }
         }).done(function(response){
+          console.log(response)
           // Successfully verified that the payment was successful
         })
       },
@@ -46,6 +51,6 @@
   var btn = document.getElementById("payment-button-khalti");
   btn.onclick = function (e) {
     e.preventDefault();
-    checkout.show({amount: "<%= current_order.total %>"});
+    checkout.show({amount: "<%= (current_order.total.to_f) * 100 %>"});
   }
 </script>
