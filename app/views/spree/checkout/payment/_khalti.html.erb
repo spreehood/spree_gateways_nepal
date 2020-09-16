@@ -1,33 +1,28 @@
-this is khalti
 <a id="payment-button-khalti" href="#">Pay with Khalti</a>
-
 <script src="https://unpkg.com/khalti-checkout-web@latest/dist/khalti-checkout.iffe.js"></script>
-
+<% total_price = current_order.total%>
 <script>
   window.addEventListener('DOMContentLoaded', function () {
     SpreeGatewaysNepal.paymentMethodID = "<%= payment_method.id %>"
   })
-  //
-  //{
-  //  "idx": "dJUHvrLBtucZ6sYK5BuNU5",
-  //"token": "hJ5HhSgLedDHSjYfKZaLNR",
-  //"amount": 1000,
-  //"mobile": "98XXXXX935",
-  //"product_identity": "1234567890",
-  //"product_name": "Drogon",
-  //"product_url": "http://gameofthrones.com/buy/Dragons"
-  //}
 
   var config = {
     // replace this key with yours
-    publicKey: 'test_public_key_5e19052f2a7e4b3bbf464a12653036bc',
-    productIdentity: '1234567890',
-    productName: 'Drogon',
-    productUrl: 'http://gameofthrones.com/buy/Dragons',
+    publicKey: "<%= Spree::Gateway::Khalti.first.preferences[:test_public_key] %>",
+    productIdentity:"<%= current_order.name %>",
+    productName: "<%= current_order.products.first.name %>",
+    productUrl: "<%= 'localhost:3000/products/' + current_order.products.first.slug%>",
     eventHandler: {
       onSuccess(payload) {
-        // hit merchant api for initiating verfication
-        console.log(payload);
+        var authenticity_token = $('input[name="authenticity_token"]')[0].value;
+        // Call the backend API for verifying the token
+        $.ajax({
+          url: '/khalti',
+          type: 'POST',
+          data: payload + `authenticity_token=${token}`
+        }).done(function(response){
+          // Successfully verified that the payment was successful
+        })
       },
       // onError handler is optional
       onError(error) {
@@ -51,8 +46,6 @@ this is khalti
   var btn = document.getElementById("payment-button-khalti");
   btn.onclick = function (e) {
     e.preventDefault();
-//    debugger
-    // minimum transaction amount must be 10, i.e 1000 in paisa.
-    checkout.show({amount: 1000});
+    checkout.show({amount: "<%= current_order.total %>"});
   }
 </script>

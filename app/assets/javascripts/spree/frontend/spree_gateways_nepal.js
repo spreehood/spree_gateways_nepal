@@ -26,7 +26,6 @@ SpreeGatewaysNepal = {
 $(document).ready(function() {
   SpreeGatewaysNepal.updateSaveAndContinueVisibility();
   paymentMethods = $('div[data-hook="checkout_payment_step"] input[type="radio"]').click(function (e) {
-    // debugger
     SpreeGatewaysNepal.updateSaveAndContinueVisibility();
   });
 })
