@@ -1,7 +1,6 @@
 class Spree::Gateway::Khalti < Spree::Gateway
   attr_accessor :server, :test_mode
 
-
   preference :server,:string, default: 'test'
   preference :test_mode, :boolean, default: true
   preference :test_public_key, :string
@@ -13,7 +12,7 @@ class Spree::Gateway::Khalti < Spree::Gateway
     Spree::Gateway::Khalti
   end
   def payment_source_class
-    Spree::CreditCard
+    Spree::PaymentMethod
   end
 
   def method_type

@@ -1,4 +1,5 @@
 <a id="payment-button-khalti" href="#">Pay with Khalti</a>
+<% binding.pry %>
 <script src="https://unpkg.com/khalti-checkout-web@latest/dist/khalti-checkout.iffe.js"></script>
 <script>
   window.addEventListener('DOMContentLoaded', function () {
@@ -6,14 +7,12 @@
   })
 
   var config = {
-    // replace this key with yours
     publicKey: "<%= Spree::Gateway::Khalti.first.preferences[:test_public_key] %>",
-    productIdentity:"<%= current_order.name %>",
-    productName: "<%= current_order.products.first.name %>",
-    productUrl: "<%= 'https://bazarnp.com/products/' + current_order.products.first.slug%>",
+    productIdentity:"<%= current_order.number %>",
+    productName: "<%= current_order.number %>",
+    productUrl: "<%= current_store.url + '/orders/' + current_order.number%>",
     eventHandler: {
       onSuccess(payload) {
-        debugger
         var authenticity_token = $('input[name="authenticity_token"]')[0].value;
         // Call the backend API for verifying the token
         $.ajax({
@@ -26,6 +25,7 @@
           }
         }).done(function(response){
           console.log(response)
+          SpreeGatewaysNepal.showSaveAndContinue()
           // Successfully verified that the payment was successful
         })
       },

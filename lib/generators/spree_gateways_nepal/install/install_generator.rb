@@ -5,7 +5,7 @@ module SpreeGatewaysNepal
 
       def add_javascripts
         append_file 'vendor/assets/javascripts/spree/frontend/all.js', "//= require spree/frontend/spree_gateways_nepal\n"
-        append_file 'vendor/assets/javascripts/spree/backend/all.js', "//= require spree/backend/spree_gateways_nepal\n"
+      #   append_file 'vendor/assets/javascripts/spree/backend/all.js', "//= require spree/backend/spree_gateways_nepal\n"
       end
       def add_migrations
         run 'bundle exec rake railties:install:migrations FROM=spree_gateways_nepal'
