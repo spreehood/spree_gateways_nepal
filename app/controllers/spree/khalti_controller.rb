@@ -19,6 +19,20 @@ module Spree
       render json: {message: response.message, code: response.code}
     end
 
+    # To be used when configurations need to be fetched from the UI
+    def khalti_payment_config
+      @payment_method = PaymentMethod.find(params[:payment_method_id])
 
+      config = {
+        publicKey: @payment_method.preferences[:test_public_key],
+        productIdentity: current_order.number,
+        productName: current_order.number,
+        productUrl: "#{current_store.url}/orders/#{current_order.number}",
+        paymnetPreference: ["MOBILE_BANKING", "KHALTI", "EBANKING","CONNECT_IPS","SCT"],
+        checkoutAmount: (current_order.total) * 100 #Converting to Pais
+      }
+
+      render json: {config: config}, status: :ok
+    end
   end
 end
