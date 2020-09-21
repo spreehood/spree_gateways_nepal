@@ -8,20 +8,20 @@ class Spree::Gateway::Khalti < Spree::Gateway
   preference :live_public_key, :string
   preference :live_secret_key, :string
 
+  def auto_capture?
+    true
+  end
+
   def provider_class
     Spree::Gateway::Khalti
   end
+
   def payment_source_class
-    Spree::PaymentMethod
+    Spree::CreditCard
   end
 
   def method_type
     'khalti'
   end
 
-  def purchase(amount, transaction_details, options = {})
-    # Have to write the code to verify the transaction here
-    # and send the success response to the frontend here
-    ActiveMerchant::Billing::Response.new(true, 'success', {}, {})
-  end
 end
