@@ -23,6 +23,10 @@ module Spree
         response = https.request(request)
 
         if response_code.eql?(200)
+          responseJSON = JSON.parse(response.body)
+
+          # Update the payment source with the response then complete
+          current_payment.source.update!(khalti_response_attributes(responseJSON))
           current_payment.complete!
 
           unless current_order.next
@@ -80,6 +84,30 @@ module Spree
       end
 
       payment
+    end
+
+    def khalti_response_attributes(responseJSON)
+      update_attributes = {
+        khalti_payment_token_id: responseJSON['idx'],
+        khalti_payment_type_id: responseJSON['type']['idx'],
+        khalti_payment_type_name: responseJSON['type']['name'],
+        payment_state_id: responseJSON['state']['idx'],
+        payment_state_name: responseJSON['state']['name'],
+        payment_state_template: responseJSON['state']['template'],
+        amount: responseJSON['amount'],
+        fee_amount: responseJSON['fee_amount'],
+        refunded: responseJSON['refunded'],
+        created_on: responseJSON['created_on'],
+        ebanker: responseJSON['ebanker'],
+        khalti_user_id: responseJSON['user']['idx'],
+        khalti_user_name: responseJSON['user']['name'],
+        khalti_user_email: responseJSON['user']['email'],
+        khalti_user_mobile: responseJSON['user']['mobile'],
+        khalti_merchant_id: responseJSON['merchant']['idx'],
+        khalti_merchant_name: responseJSON['merchant']['name'],
+        khalti_merchant_mobile: responseJSON['merchant']['mobile'],
+        khalti_merchant_email: responseJSON['merchant']['email']
+      }
     end
 
   end
