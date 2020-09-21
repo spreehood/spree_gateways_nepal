@@ -8,7 +8,10 @@ module Spree
       payment_method = PaymentMethod.find(params[:payment_method_id])
 
       order = current_order || raise(ActiveRecord::RecordNotFound)
-      
+
+      current_payment = create_payment(payment_method)
+      current_payment.pend!
+
       begin
         # API call to khalti
         headers = {
@@ -22,16 +25,21 @@ module Spree
         response = https.request(request)
 
         if response_code.eql?(200)
+          current_payment.complete!
 
-          payment_success(payment_method)
-          # render json: {message: response.message, code: response.code}
+          unless current_order.next
+            flash[:error] = @order.errors.full_messages.join("\n")
+            redirect_to checkout_state_path(current_order.state) and return
+          end
 
-          # redirect_to response.redirect_uri if payment_success(payment_method)
+          redirect_to completion_route(order)
         else
+          current_payment.invalid!
           flash[:error] = Spree.t('flash.generic_error', scope: 'khalti', reasons: 'Server verification with khalti failed')
-          # redirect_to checkout_state_path(:payment)
+          redirect_to checkout_state_path(:payment)
         end
       rescue SocketError
+        current_payment.invalid!
         flash[:error] = Spree.t('flash.connection_failed', scope: 'khalti')
         redirect_to checkout_state_path(:payment)
       end
@@ -61,25 +69,20 @@ module Spree
       order_path(order)
     end
 
-    def payment_success(payment_method)
+    def create_payment(payment_method)
       payment = current_order.payments.build(
         payment_method_id: payment_method.id,
         amount: current_order.total,
         state: 'checkout',
-        source: Spree::CreditCard.first
+        source: Spree::KhaltiPaymentSource.create
       )
-      unless payment.save
+      unless payment.save!
         flash[:error] = payment.errors.full_messages.join("\n")
         redirect_to checkout_state_path(current_order.state) and return
       end
-      binding.pry
-      # unless current_order.next
 
-      #   flash[:error] = @order.errors.full_messages.join("\n")
-      #   redirect_to checkout_state_path(current_order.state) and return
-      # end
-      # binding.pry
-      payment.pend!
+      payment
+
     end
 
   end

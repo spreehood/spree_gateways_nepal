@@ -17,7 +17,15 @@ class Spree::Gateway::Khalti < Spree::Gateway
   end
 
   def payment_source_class
-    Spree::CreditCard
+    Spree::KhaltiPaymentSource
+  end
+
+  def purchase(amount, source, options = {})
+    Class.new do
+      def success?; tru
+        e; end
+      def authorization; nil; end
+    end.new
   end
 
   def method_type
