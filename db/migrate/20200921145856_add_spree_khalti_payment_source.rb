@@ -20,7 +20,6 @@ class AddSpreeKhaltiPaymentSource < ActiveRecord::Migration[6.0]
       t.string :khalti_merchant_name
       t.string :khalti_merchant_email
       t.string :khalti_merchant_mobile
-      t.string :payment_id
       t.integer :payment_method_id
       t.integer :user_id
       t.timestamps

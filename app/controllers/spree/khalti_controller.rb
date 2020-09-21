@@ -26,7 +26,7 @@ module Spree
           responseJSON = JSON.parse(response.body)
 
           # Update the payment source with the response then complete
-          current_payment.source.update!(khalti_response_attributes(responseJSON))
+          current_payment.source.update!(khalti_response_attributes(responseJSON).merge({payment_method_id: payment_method.id, user_id: current_order.user.id}))
           current_payment.complete!
 
           unless current_order.next
