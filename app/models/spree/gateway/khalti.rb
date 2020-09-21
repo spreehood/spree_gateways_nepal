@@ -22,8 +22,7 @@ class Spree::Gateway::Khalti < Spree::Gateway
 
   def purchase(amount, source, options = {})
     Class.new do
-      def success?; tru
-        e; end
+      def success?; true; end
       def authorization; nil; end
     end.new
   end
