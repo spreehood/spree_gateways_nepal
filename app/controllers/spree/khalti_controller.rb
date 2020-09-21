@@ -1,5 +1,3 @@
-require 'uri'
-require 'net/http'
 module Spree
   class KhaltiController < StoreController
     skip_before_action :verify_authenticity_token
@@ -82,7 +80,6 @@ module Spree
       end
 
       payment
-
     end
 
   end
