@@ -26,8 +26,9 @@ module Spree
           responseJSON = JSON.parse(response.body)
 
           # Update the payment source with the response then complete
+          current_payment.update!(response_code: responseJSON['idx'])
           current_payment.source.update!(khalti_response_attributes(responseJSON).merge({payment_method_id: payment_method.id, user_id: current_order.user.id}))
-          current_payment.complete!
+          current_payment.process!
 
           unless current_order.next
             flash[:error] = @order.errors.full_messages.join("\n")
@@ -38,11 +39,14 @@ module Spree
         else
           current_payment.invalid!
           flash[:error] = Spree.t('flash.generic_error', scope: 'khalti', reasons: 'Server verification with khalti failed')
+
           redirect_to checkout_state_path(:payment)
         end
+
       rescue SocketError
         current_payment.invalid!
         flash[:error] = Spree.t('flash.connection_failed', scope: 'khalti')
+
         redirect_to checkout_state_path(:payment)
       end
 
@@ -112,6 +116,5 @@ module Spree
     end
 
   end
-
 
 end
