@@ -1,6 +1,6 @@
 class Spree::Gateway::Khalti < Spree::Gateway
   attr_accessor :server, :test_mode
-
+  preference :server
   preference :test_mode, :boolean, default: true
   preference :test_public_key, :string
   preference :test_secret_key, :string

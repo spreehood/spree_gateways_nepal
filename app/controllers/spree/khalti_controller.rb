@@ -56,7 +56,7 @@ module Spree
         productIdentity: current_order.number,
         productName: current_order.number,
         productUrl: "#{current_store.url}/orders/#{current_order.number}",
-        paymnetPreference: ["MOBILE_BANKING", "KHALTI", "EBANKING","CONNECT_IPS","SCT"],
+        paymentPreference: ["MOBILE_BANKING", "KHALTI", "EBANKING","CONNECT_IPS","SCT"],
         checkoutAmount: (current_order.total) * 100 #Converting to Pais
       }
 
@@ -78,6 +78,7 @@ module Spree
         state: 'checkout',
         source: Spree::KhaltiPaymentSource.create
       )
+
       unless payment.save!
         flash[:error] = payment.errors.full_messages.join("\n")
         redirect_to checkout_state_path(current_order.state) and return

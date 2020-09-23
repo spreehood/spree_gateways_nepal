@@ -1,6 +1,7 @@
 module Spree
   class Spree::KhaltiPaymentSource < Spree::Base
     belongs_to :payment_method
+
     has_many :payments, as: :source
 
     def actions

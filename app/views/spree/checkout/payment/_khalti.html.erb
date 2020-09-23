@@ -1,4 +1,4 @@
-<a id="payment-button-khalti" href="#">Pay with Khalti</a>
+<a id="payment-button-khalti" href="#"><%= Spree.t(:pay_with_khalti) %></a>
 <script src="https://unpkg.com/khalti-checkout-web@latest/dist/khalti-checkout.iffe.js"></script>
 <script>
   window.addEventListener('DOMContentLoaded', function () {
@@ -23,9 +23,7 @@
             "authenticity_token": authenticity_token
           }
         }).done(function(response){
-          console.log(response)
           SpreeGatewaysNepal.showSaveAndContinue()
-          // Successfully verified that the payment was successful
         })
       },
       // onError handler is optional
