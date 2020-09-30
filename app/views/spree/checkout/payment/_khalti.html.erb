@@ -6,7 +6,7 @@
   })
 
   var config = {
-    publicKey: "<%= Spree::Gateway::Khalti.first.preferences[:test_public_key] %>",
+    publicKey: "<%= payment_method.preferences[:test_mode] ? payment_method.preferences[:test_public_key] :  payment_method.preferences[:live_public_key] %>",
     productIdentity:"<%= current_order.number %>",
     productName: "<%= current_order.number %>",
     productUrl: "<%= current_store.url + '/orders/' + current_order.number%>",
@@ -48,6 +48,6 @@
   var btn = document.getElementById("payment-button-khalti");
   btn.onclick = function (e) {
     e.preventDefault();
-    checkout.show({amount: "<%= (current_order.total.to_f) * 100 %>"});
+    checkout.show({amount: "<%= (current_order.total.to_f) * payment_method.paisa_rate %>"});
   }
 </script>

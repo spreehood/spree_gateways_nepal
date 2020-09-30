@@ -29,4 +29,8 @@ class Spree::Gateway::Khalti < Spree::Gateway
     'khalti'
   end
 
+  def paisa_rate
+    100
+  end
+
 end

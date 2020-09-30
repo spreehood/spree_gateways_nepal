@@ -13,7 +13,7 @@ module Spree
       begin
         # API call to khalti
         headers = {
-          Authorization: "Key #{payment_method.preferences[:test_secret_key]}"
+          Authorization: "Key #{payment_method.preferences[:test_mode] ? payment_method.preferences[:test_secret_key] :  payment_method.preferences[:live_secret_key] }"
         }
         uri = URI.parse('https://khalti.com/api/v2/payment/verify/')
         https = Net::HTTP.new(uri.host, uri.port)
@@ -61,7 +61,7 @@ module Spree
         productName: current_order.number,
         productUrl: "#{current_store.url}/orders/#{current_order.number}",
         paymentPreference: ["MOBILE_BANKING", "KHALTI", "EBANKING","CONNECT_IPS","SCT"],
-        checkoutAmount: (current_order.total) * 100 #Converting to Pais
+        checkoutAmount: (current_order.total) * paisa_rate #Converting to Pais
       }
 
       render json: {config: config}, status: :ok
