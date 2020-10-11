@@ -5,7 +5,6 @@ describe Spree::Gateway::Esewa do
 
   context '.provider_class' do
     it 'is a Esewa gateway' do
-      binding.pry
       expect(gateway.provider_class).to eq ::ActiveMerchant::Billing::EsewaGateway
     end
   end
