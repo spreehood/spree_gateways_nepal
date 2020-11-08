@@ -9,7 +9,8 @@
     publicKey: "<%= payment_method.preferences[:test_mode] ? payment_method.preferences[:test_public_key] :  payment_method.preferences[:live_public_key] %>",
     productIdentity:"<%= current_order.number %>",
     productName: "<%= current_order.number %>",
-    productUrl: "<%= current_store.url + '/orders/' + current_order.number%>",
+    productUrl: "<%= 'http://' + current_store.url + '/orders/' + current_order.number%>",
+    // productUrl: "http://gameofthrones.wikia.com/wiki/Dragons",
     eventHandler: {
       onSuccess(payload) {
         var authenticity_token = $('input[name="authenticity_token"]')[0].value;
@@ -49,5 +50,6 @@
   btn.onclick = function (e) {
     e.preventDefault();
     checkout.show({amount: "<%= (current_order.total.to_f) * payment_method.paisa_rate %>"});
+    // checkout.show({amount: 1000});
   }
 </script>

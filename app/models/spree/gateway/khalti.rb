@@ -11,18 +11,30 @@ class Spree::Gateway::Khalti < Spree::Gateway
   end
 
   def provider_class
-    Spree::Gateway::Khalti
+    # Spree::Gateway::Khalti
+    self.class
   end
 
   def payment_source_class
-    Spree::KhaltiPaymentSource
+    # Spree::KhaltiPaymentSource
   end
 
   def purchase(amount, source, options = {})
-    Class.new do
-      def success?; true; end
-      def authorization; nil; end
-    end.new
+    # Class.new do
+    #   def success?; true; end
+    #   def authorization; nil; end
+    # end.new
+
+    khalti_service_response = Spree::Payments::KhaltiPayService.new(
+      payment_method_preference: options[:preference],
+      token: options[:token],
+      amount: amount
+    ).call
+
+    ActiveMerchant::Billing::Response.new(
+      khalti_service_response['status'],
+      khalti_service_response['message']
+    )
   end
 
   def method_type
@@ -32,5 +44,4 @@ class Spree::Gateway::Khalti < Spree::Gateway
   def paisa_rate
     100
   end
-
 end

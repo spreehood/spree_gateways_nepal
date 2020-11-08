@@ -1,6 +1,19 @@
 module Spree
   class KhaltiController < StoreController
     skip_before_action :verify_authenticity_token
+    before_action :find_payment_method, only: [:khalti_payment]
+
+    def khalti_payment
+      price_in_paisa = params[:payload][:amount]
+      @payment_method.purchase(price_in_paisa, {}, khalti_pay_options)
+    end
+
+    def khalti_pay_options
+      {
+        token: params[:payload][:token],
+        preference: @payment_method.preferences
+      }
+    end
 
     def payment
       payment_method = PaymentMethod.find(params[:payment_method_id])
@@ -21,7 +34,6 @@ module Spree
         request = Net::HTTP::Post.new(uri.request_uri, headers)
         request.set_form_data('token' => params[:payload][:token], 'amount' => params[:payload][:amount].to_f)
         response = https.request(request)
-
         if response_code.eql?(200)
           responseJSON = JSON.parse(response.body)
 
@@ -114,7 +126,11 @@ module Spree
         khalti_merchant_email: responseJSON['merchant']['email']
       }
     end
-
   end
 
+  private
+
+  def find_payment_method
+    @payment_method = PaymentMethod.find(params[:payment_method_id])
+  end
 end
