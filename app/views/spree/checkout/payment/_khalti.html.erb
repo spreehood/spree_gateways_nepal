@@ -1,0 +1,53 @@
+<a id="payment-button-khalti" href="#"><%= Spree.t(:pay_with_khalti) %></a>
+<script src="https://unpkg.com/khalti-checkout-web@latest/dist/khalti-checkout.iffe.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    SpreeGatewaysNepal.paymentMethodID = "<%= payment_method.id %>"
+  })
+
+  var config = {
+    publicKey: "<%= payment_method.preferences[:test_mode] ? payment_method.preferences[:test_public_key] :  payment_method.preferences[:live_public_key] %>",
+    productIdentity:"<%= current_order.number %>",
+    productName: "<%= current_order.number %>",
+    productUrl: "<%= current_store.url + '/orders/' + current_order.number%>",
+    eventHandler: {
+      onSuccess(payload) {
+        var authenticity_token = $('input[name="authenticity_token"]')[0].value;
+        // Call the backend API for verifying the token
+        $.ajax({
+          url: '/khalti',
+          type: 'POST',
+          data: {
+            "payload": payload,
+            "payment_method_id": "<%= payment_method.id%>",
+            "authenticity_token": authenticity_token
+          }
+        }).done(function(response){
+          SpreeGatewaysNepal.showSaveAndContinue()
+        })
+      },
+      // onError handler is optional
+      onError(error) {
+        // handle errors
+        console.log(error);
+      },
+      onClose() {
+        console.log('widget is closing');
+      },
+    },
+    paymentPreference: [
+      'KHALTI',
+      'EBANKING',
+      'MOBILE_BANKING',
+      'CONNECT_IPS',
+      'SCT',
+    ],
+  };
+
+  var checkout = new KhaltiCheckout(config);
+  var btn = document.getElementById("payment-button-khalti");
+  btn.onclick = function (e) {
+    e.preventDefault();
+    checkout.show({amount: "<%= (current_order.total.to_f) * payment_method.paisa_rate %>"});
+  }
+</script>
