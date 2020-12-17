@@ -5,3 +5,4 @@ en:
   hello: "Hello world"
   spree:
     pay_with_khalti: "Pay With Khalti"
+    pay_with_esewa: "Pay with Esewa"

@@ -1,5 +1,4 @@
-module Spree
-  class Gateway::Esewa < Gateway
+  class Spree::Gateway::Esewa < Spree::Gateway
     preference :sandbox_url, :string
     preference :production_url, :string
     preference :merchant_code, :string, default: 'epay_payment'
@@ -24,4 +23,3 @@ module Spree
       # TODO: Trigger esewa payment service
     end
   end
-end

@@ -1,12 +1,13 @@
 module Spree
-  module Payment
     class EpayService
-      def call(order:, payment_method:)
+      def initialize(order, payment_method)
+        binding.pry
         @order = order
         @payment_method = payment_method
       end
 
       def payment
+        binding.pry
         response = connection.post(api_url, request_body)
         response.body
       end
@@ -15,9 +16,9 @@ module Spree
 
       # Setting to true will log requests and response to $stdout,
       # should always be set to false when commiting code
-      DEBUG_MODE = false
+      DEBUG_MODE = true
 
-      attr_reader :order, payment_method:, :url
+      attr_reader :order, :payment_method, :url
 
       def api_url
         @url ||= payment_method[:preferences][:test_mode] ?
@@ -57,5 +58,4 @@ module Spree
         }.to_json
       end
     end
-  end
 end
