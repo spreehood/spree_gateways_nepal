@@ -12,11 +12,11 @@
         amt: "<%= @order.item_total%>",
         psc: "<%= @order.shipment_total%>",
         pdc: 0,
-        txAmt: "<%= @order.additional_tax_total%>",
-        tAmt: "<%= @order.total%>",
+        txAmt: parseFloat("<%= @order.additional_tax_total%>"),
+        tAmt: parseFloat("<%= @order.total.to_f%>"),
         pid: "<%= @order.number%>",
         scd: "<%= payment_method.preferences[:merchant_code]%>",
-        su: "http://localhost:3000/checkout",
+        su: "http://localhost:3000/esewa-payment",
         fu: "http://localhost:3000/checkout"
     }
 
@@ -32,7 +32,7 @@
             hiddenField.setAttribute("value", params[key]);
             form.appendChild(hiddenField);
         }
-
+        debugger
         document.body.appendChild(form);
         form.submit();
     }

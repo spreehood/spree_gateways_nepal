@@ -19,7 +19,14 @@
       'esewa'
     end
 
-    def purchase
-      # TODO: Trigger esewa payment service
+    def payment_source_class
+      Spree::SpreePaymentSource
+    end
+
+    def purchase(amount, source, options={})
+      Class.new do
+        def success?; true; end
+        def authorization; nil; end
+      end.new
     end
   end

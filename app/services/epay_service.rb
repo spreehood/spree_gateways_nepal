@@ -1,13 +1,11 @@
 module Spree
     class EpayService
       def initialize(order, payment_method)
-        binding.pry
         @order = order
         @payment_method = payment_method
       end
 
       def payment
-        binding.pry
         response = connection.post(api_url, request_body)
         response.body
       end
