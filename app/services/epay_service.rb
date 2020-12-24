@@ -14,7 +14,7 @@ module Spree
 
       # Setting to true will log requests and response to $stdout,
       # should always be set to false when commiting code
-      DEBUG_MODE = true
+      DEBUG_MODE = false
 
       attr_reader :order, :payment_method, :url
 
