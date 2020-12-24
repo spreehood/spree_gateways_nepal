@@ -1,32 +1,8 @@
 module Spree
   class EsewaController < StoreController
     skip_before_action :verify_authenticity_token
-    # before_action :payment_method, only: [:payment]
 
     def payment
-      # Call service to call the esewa payment
-
-      # parameters = {
-      #   "amt"=> params[:amt].to_f,
-      #   "scd"=> 'EPAYTEST',
-      #   "rid"=> params[:refId],
-      #   "pid"=> params[:oid]
-      # }
-
-      # uri = URI.parse("https://uat.esewa.com.np/epay/transrec")
-
-      # https = Net::HTTP.new(uri.host, uri.port)
-      # https.use_ssl = true
-      # request = Net::HTTP::Post.new(uri.request_uri)
-      # request.set_form_data(parameters)
-      # response = https.request(request)
-
-      # response_data = Hash.from_xml(response.body)
-
-      # if response_data["response"]["response_code"].strip().eql?("Success")
-      # else
-      # end
-
       order = current_order || raise(ActiveRecord::RecordNotFound)
       payment_method = Spree::Gateway::Esewa.find_by(type: "Spree::Gateway::Esewa")
       current_payment = create_payment(payment_method)
@@ -51,10 +27,6 @@ module Spree
     end
 
     private
-
-    def payment_method
-      @payment_method = Spree::PaymentMethod.find(params[:payment_method_id])
-    end
 
     def completion_route(order)
       order_path(order)
