@@ -7,7 +7,10 @@
 
   var btn = document.getElementById("payment-button-esewa");
   btn.onclick = function (e) {
-    var path="https://uat.esewa.com.np/epay/main";
+    var esewaUrl="<%=payment_method[:preferences][:test_mode] ?
+          payment_method[:preferences][:sandbox_url] :
+          payment_method[:preferences][:production_url] %>"
+    var paymentPath = `${esewaUrl}/epay/main`
     var params= {
         amt: "<%= @order.item_total%>",
         psc: "<%= @order.shipment_total%>",
@@ -16,8 +19,8 @@
         tAmt: parseFloat("<%= @order.total.to_f%>"),
         pid: "<%= @order.number%>",
         scd: "<%= payment_method.preferences[:merchant_code]%>",
-        su: "http://localhost:3000/esewa-payment",
-        fu: "http://localhost:3000/checkout"
+        su: "<%= payment_method[:preferences][:successful_callback_url]%>",
+        fu: "<%= payment_method[:preferences][:failure_callback_url] %>"
     }
 
     function post(path, params) {
@@ -32,12 +35,10 @@
             hiddenField.setAttribute("value", params[key]);
             form.appendChild(hiddenField);
         }
-        debugger
         document.body.appendChild(form);
         form.submit();
     }
-
-    post(path, params);
+    post(paymentPath, params);
   }
 
 </script>
