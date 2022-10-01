@@ -12,7 +12,7 @@
     productUrl: "<%= current_store.url + '/orders/' + current_order.number%>",
     eventHandler: {
       onSuccess(payload) {
-        var authenticity_token = $('input[name="authenticity_token"]')[0].value;
+        // var authenticity_token = $('input[name="authenticity_token"]')[0].value;
         // Call the backend API for verifying the token
         $.ajax({
           url: '/khalti',

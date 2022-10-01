@@ -1,0 +1,45 @@
+
+ <a id="payment-button-esewa" href="#"><%= Spree.t(:pay_with_esewa) %></a>
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    SpreeGatewaysNepal.paymentMethodID = "<%= payment_method.id %>"
+  })
+
+  var btn = document.getElementById("payment-button-esewa");
+  btn.onclick = function (e) {
+    var esewaUrl="<%=payment_method[:preferences][:test_mode] ?
+          payment_method[:preferences][:sandbox_url] :
+          payment_method[:preferences][:production_url] %>"
+    var paymentPath = `${esewaUrl}/epay/main`
+    var params= {
+        amt: "<%= @order.item_total%>",
+        psc: "<%= @order.shipment_total%>",
+        pdc: 0,
+        txAmt: parseFloat("<%= @order.additional_tax_total%>"),
+        tAmt: parseFloat("<%= @order.total.to_f%>"),
+        pid: "<%= @order.number%>",
+        scd: "<%= payment_method.preferences[:merchant_code]%>",
+        su: "<%= payment_method[:preferences][:successful_callback_url]%>",
+        fu: "<%= payment_method[:preferences][:failure_callback_url] %>"
+    }
+
+    function post(path, params) {
+        var form = document.createElement("form");
+        form.setAttribute("method", "POST");
+        form.setAttribute("action", path);
+
+        for(var key in params) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", params[key]);
+            form.appendChild(hiddenField);
+        }
+        document.body.appendChild(form);
+        form.submit();
+    }
+    post(paymentPath, params);
+  }
+
+</script>
+
