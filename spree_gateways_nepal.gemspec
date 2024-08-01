@@ -24,8 +24,10 @@ Gem::Specification.new do |s|
   spree_version = '>= 3.2.0', '< 5.0'
   s.add_dependency 'spree_core', spree_version
   s.add_dependency 'spree_api', spree_version
+  s.add_dependency 'spree_gateway'
   s.add_dependency 'spree_backend', spree_version
   s.add_dependency 'spree_extension'
+
 
   s.add_development_dependency 'spree_dev_tools'
 end
