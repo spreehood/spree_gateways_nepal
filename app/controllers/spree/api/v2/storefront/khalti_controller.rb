@@ -7,9 +7,14 @@ module Spree
       module Storefront
         class KhaltiController < Spree::Api::V2::ResourceController
           before_action :require_spree_current_user
+          before_action :find_order
           
           def payment_initiate
             payment_method = PaymentMethod.find(params[:payment_method_id])
+
+            order = @order || raise(ActiveRecord::RecordNotFound)
+            current_payment = create_payment(payment_method)
+            current_payment.pend!
 
             begin
               headers = {
@@ -60,10 +65,7 @@ module Spree
           def update
             payment_method = PaymentMethod.find(params[:payment_method_id])
 
-            # order = current_order || raise(ActiveRecord::RecordNotFound)
-
-            # current_payment = create_payment(payment_method)
-            # current_payment.pend!
+            current_payment = @order.payments.last
 
             begin
               headers = {
@@ -87,20 +89,19 @@ module Spree
               }
 
               request.body = payload.to_json
-
               response = https.request(request)
 
               if response.code.to_i == 200
                 response_json = JSON.parse(response.body)
 
-                # current_payment.update!(response_code: response_json['pidx'])
-                # current_payment.source.update!(
-                #   khalti_response_attributes(response_json).merge({
-                #     payment_method_id: payment_method.id,
-                #     user_id: current_order.user.id
-                #   })
-                # )
-                # current_payment.process!
+                current_payment.update!(response_code: response_json['pidx'])
+                current_payment.source.update!(
+                  khalti_response_attributes(response_json).merge({
+                    payment_method_id: payment_method.id,
+                    user_id: @order.user.id
+                  })
+                )
+                current_payment.process!
 
                 render json: response_json, status: :ok
               else
@@ -119,6 +120,10 @@ module Spree
 
           private
 
+          def find_order
+            @order ||= Spree::Order.find(params[:purchase_order_id])
+          end
+
           def khalti_response_attributes(response_json)
             {
               pidx: response_json['pidx'],
@@ -131,9 +136,9 @@ module Spree
           end
 
           def create_payment(payment_method)
-            payment = current_order.payments.build(
+            payment = @order.payments.build(
               payment_method_id: payment_method.id,
-              amount: current_order.total,
+              amount: @order.total,
               state: 'checkout',
               source: Spree::KhaltiPaymentSource.create
             )
