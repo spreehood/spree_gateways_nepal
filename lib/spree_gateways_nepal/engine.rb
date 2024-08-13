@@ -1,14 +1,23 @@
+# lib/spree_gateways_nepal/engine.rb
+require 'spree/core'
+require 'spree_gateway'
+
 module SpreeGatewaysNepal
   class Engine < Rails::Engine
-    require 'spree/core'
     isolate_namespace Spree
     engine_name 'spree_gateways_nepal'
 
-    initializer "spree.gateway.payment_methods", after: "spree.register.payment_methods" do |app|
+    config.autoload_paths += %W(#{config.root}/lib)
+
+    # initializer "spree.gateway.payment_methods", after: "spree.register.payment_methods" do |app|
+    #   app.config.spree.payment_methods << Spree::Gateway::Khalti
+    # end
+
+    config.after_initialize do |app|
+      require_dependency 'spree/gateway/khalti'
       app.config.spree.payment_methods << Spree::Gateway::Khalti
     end
 
-    # use rspec for tests
     config.generators do |g|
       g.test_framework :rspec
     end
