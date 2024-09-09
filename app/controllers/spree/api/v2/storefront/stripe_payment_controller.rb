@@ -8,8 +8,12 @@ module Spree
           def create
             order = Spree::Order.find(params[:order_id])
 
+            # Frontend issues multiple requests for payment creation
+            # This check is to ensure that only one payment is created
+            # Remove later after the issue in the frontend is fixed
             if order.payments.count > 0
-              render json: { error: 'Order already has a payment' }, status: :unprocessable_entity
+              return render json: { error: 'Order already has a payment' }, status: :unprocessable_entity
+              # return
             end
             
             payment_method = Spree::PaymentMethod.find_by(type: 'Spree::Gateway::StripeExpressCheckout')
