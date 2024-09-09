@@ -5,6 +5,8 @@ module Spree
     module V2
       module Storefront
         class StripePaymentController < ::Spree::Api::V2::BaseController
+          before_action :require_spree_current_user
+
           def create
             order = Spree::Order.find(params[:order_id])
             
