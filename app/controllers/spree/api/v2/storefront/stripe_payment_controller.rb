@@ -7,6 +7,10 @@ module Spree
         class StripePaymentController < ::Spree::Api::V2::BaseController
           def create
             order = Spree::Order.find(params[:order_id])
+
+            if order.payments.count > 0
+              render json: { error: 'Order already has a payment' }, status: :unprocessable_entity
+            end
             
             payment_method = Spree::PaymentMethod.find_by(type: 'Spree::Gateway::StripeExpressCheckout')
 
