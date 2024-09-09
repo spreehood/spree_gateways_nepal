@@ -13,8 +13,6 @@ module Spree
             payment_method = PaymentMethod.find(params[:payment_method_id])
 
             order = @order || raise(ActiveRecord::RecordNotFound)
-            current_payment = create_payment(payment_method)
-            current_payment.pend!
 
             begin
               headers = {
@@ -46,6 +44,8 @@ module Spree
               response = https.request(request)
 
               if response.code.to_i == 200
+                current_payment = create_payment(payment_method)
+                current_payment.pend!
                 response_json = JSON.parse(response.body)
                 render json: response_json, status: :ok
               else
