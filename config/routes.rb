@@ -13,6 +13,8 @@ Spree::Core::Engine.add_routes do
             post :update, to: 'khalti#update'
           end
         end
+
+        resources :stripe_payment, only: :create
       end
     end
   end

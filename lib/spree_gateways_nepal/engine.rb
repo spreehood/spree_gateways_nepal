@@ -15,7 +15,9 @@ module SpreeGatewaysNepal
 
     config.after_initialize do |app|
       require_dependency 'spree/gateway/khalti'
+      require_dependency 'spree/gateway/stripe_express_checkout'
       app.config.spree.payment_methods << Spree::Gateway::Khalti
+      app.config.spree.payment_methods << Spree::Gateway::StripeExpressCheckout
     end
 
     config.generators do |g|
